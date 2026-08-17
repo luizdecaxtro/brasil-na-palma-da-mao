@@ -1,0 +1,1366 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Brasil na Palma da Mão</title>
+<meta name="description" content="Almanaque de dados oficiais do Brasil: estados, população, PIB, universidades, segurança e mais.">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#10241d">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Brasil na Palma da Mão">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --quadro:#10241d;        /* verde-quadro (chalkboard) */
+    --quadro-2:#173026;
+    --papel:#f3eee2;         /* papel almanaque */
+    --papel-2:#eae2d0;
+    --tinta:#1a2620;         /* texto escuro */
+    --tinta-suave:#5c6b62;
+    --ouro:#d9a72a;          /* acento ouro */
+    --ouro-escuro:#b8892b;
+    --linha:#d9d0bd;
+    --branco:#fffdf7;
+    --norte:#2e7d5b;
+    --nordeste:#c6633a;
+    --sudeste:#2f5d74;
+    --sul:#6a4a6e;
+    --centro:#b8892b;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth;font-size:112.5%}
+  body{
+    margin:0;background:var(--papel);color:var(--tinta);
+    font-family:'Inter',system-ui,sans-serif;line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1120px;margin:0 auto;padding:0 20px}
+
+  /* ---------- HERO / QUADRO ---------- */
+  .hero{
+    background:var(--quadro);color:var(--papel);
+    padding:44px 0 40px;position:relative;overflow:hidden;
+    border-bottom:3px solid var(--ouro);
+  }
+  .hero::after{ /* textura sutil de giz */
+    content:"";position:absolute;inset:0;opacity:.05;pointer-events:none;
+    background:radial-gradient(circle at 20% 30%,#fff 0,transparent 40%),
+               radial-gradient(circle at 80% 70%,#fff 0,transparent 45%);
+  }
+  .eyebrow{
+    font-family:'Space Mono',monospace;font-size:15px;letter-spacing:.22em;
+    text-transform:uppercase;color:var(--ouro);margin:0 0 10px;
+  }
+  h1{
+    font-family:'Bricolage Grotesque',sans-serif;font-weight:800;
+    font-size:clamp(2.3rem,6vw,4.2rem);line-height:.98;margin:0;letter-spacing:-.02em;
+  }
+  .lead{max-width:52ch;margin:14px 0 0;color:#cfd9cf;font-size:1.02rem}
+  .fonte-badge{
+    display:inline-flex;align-items:center;gap:8px;margin-top:18px;
+    font-family:'Space Mono',monospace;font-size:14px;letter-spacing:.05em;
+    background:rgba(217,167,42,.14);border:1px solid rgba(217,167,42,.4);
+    color:var(--ouro);padding:6px 12px;border-radius:999px;
+  }
+  .dot{width:7px;height:7px;border-radius:50%;background:var(--ouro);display:inline-block}
+
+  /* faixa de números do Brasil */
+  .brasil-stats{
+    display:grid;grid-template-columns:repeat(4,1fr);gap:1px;
+    background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.12);
+    border-radius:14px;overflow:hidden;margin-top:30px;
+  }
+  .bstat{background:var(--quadro-2);padding:18px 18px 16px}
+  .bstat .label{
+    font-family:'Space Mono',monospace;font-size:13.5px;letter-spacing:.14em;
+    text-transform:uppercase;color:#9db4a6;margin-bottom:8px;
+  }
+  .bstat .value{
+    font-family:'Bricolage Grotesque',sans-serif;font-weight:800;
+    font-size:clamp(1.3rem,3.2vw,2rem);line-height:1;font-variant-numeric:tabular-nums;
+  }
+  .bstat .ref{font-size:13.5px;color:#7f948a;margin-top:6px;font-family:'Space Mono',monospace}
+  @media(max-width:720px){ .brasil-stats{grid-template-columns:repeat(2,1fr)} }
+
+  /* ---------- SEÇÃO ESTADOS ---------- */
+  section{padding:44px 0}
+  .sec-head{display:flex;flex-wrap:wrap;align-items:end;justify-content:space-between;gap:16px;margin-bottom:6px}
+  h2{
+    font-family:'Bricolage Grotesque',sans-serif;font-weight:800;
+    font-size:clamp(1.5rem,3.5vw,2.1rem);margin:0;letter-spacing:-.01em;
+  }
+  .sec-sub{color:var(--tinta-suave);margin:6px 0 0;font-size:.95rem}
+
+  .controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:22px 0}
+  .search{
+    flex:1;min-width:220px;position:relative;
+  }
+  .search input{
+    width:100%;padding:11px 14px 11px 38px;border:1.5px solid var(--linha);
+    border-radius:10px;background:var(--branco);font-family:inherit;font-size:.95rem;color:var(--tinta);
+  }
+  .search input:focus{outline:2px solid var(--ouro);outline-offset:1px;border-color:var(--ouro)}
+  .search svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);opacity:.45}
+
+  .legenda{display:flex;flex-wrap:wrap;gap:6px}
+  .chip-reg{
+    font-family:'Space Mono',monospace;font-size:14px;padding:5px 11px;border-radius:999px;
+    border:1.5px solid transparent;cursor:pointer;background:var(--branco);color:var(--tinta);
+    display:inline-flex;align-items:center;gap:7px;transition:.15s;
+  }
+  .chip-reg .swatch{width:9px;height:9px;border-radius:50%}
+  .chip-reg[aria-pressed="true"]{border-color:currentColor;font-weight:700}
+
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:14px;margin-top:8px}
+  .tile{
+    background:var(--branco);border:1.5px solid var(--linha);border-radius:14px;
+    padding:16px;text-align:left;cursor:pointer;position:relative;transition:.16s;
+    border-left-width:5px;font-family:inherit;color:inherit;
+  }
+  .tile:hover{transform:translateY(-3px);box-shadow:0 10px 24px -14px rgba(16,36,29,.4)}
+  .tile:focus-visible{outline:2px solid var(--ouro);outline-offset:2px}
+  .tile .sigla{
+    font-family:'Space Mono',monospace;font-weight:700;font-size:1.35rem;letter-spacing:.02em;
+  }
+  .tile .reg-tag{
+    font-family:'Space Mono',monospace;font-size:12.5px;letter-spacing:.1em;text-transform:uppercase;
+    float:right;margin-top:6px;opacity:.7;
+  }
+  .tile .nome{font-weight:600;font-size:1rem;margin:2px 0 10px;line-height:1.2}
+  .tile .row{display:flex;justify-content:space-between;font-size:.82rem;color:var(--tinta-suave);padding:3px 0}
+  .tile .row b{color:var(--tinta);font-weight:600;font-variant-numeric:tabular-nums}
+
+  .skeleton{height:150px;border-radius:14px;background:linear-gradient(100deg,#efe8d8 30%,#f7f2e6 50%,#efe8d8 70%);background-size:200% 100%;animation:sk 1.3s infinite}
+  @keyframes sk{to{background-position:-200% 0}}
+  @media(prefers-reduced-motion:reduce){.skeleton{animation:none}.tile:hover{transform:none}}
+
+  /* ---------- PRÓXIMAS CAMADAS ---------- */
+  .camadas{background:var(--quadro);color:var(--papel);border-radius:18px;padding:30px 26px;margin-top:20px}
+  .camadas h3{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;margin:0 0 6px;font-size:1.3rem}
+  .camadas p{color:#bccabf;margin:0 0 18px;font-size:.92rem;max-width:60ch}
+  .camada-chips{display:flex;flex-wrap:wrap;gap:10px}
+  .cchip{
+    border:1.5px dashed rgba(217,167,42,.5);color:var(--ouro);border-radius:10px;padding:10px 14px;
+    font-size:.85rem;background:rgba(217,167,42,.06);
+  }
+  .cchip b{display:block;font-family:'Bricolage Grotesque',sans-serif;font-size:.98rem;color:var(--papel)}
+  .cchip span{font-family:'Space Mono',monospace;font-size:13.5px;opacity:.8}
+
+  /* ---------- MODAL ---------- */
+  .overlay{position:fixed;inset:0;background:rgba(16,36,29,.55);backdrop-filter:blur(3px);
+    display:none;align-items:flex-start;justify-content:center;padding:24px 16px;z-index:50;overflow:auto}
+  .overlay.open{display:flex}
+  .modal{
+    background:var(--papel);border-radius:18px;max-width:640px;width:100%;margin:auto 0;
+    box-shadow:0 30px 80px -20px rgba(0,0,0,.5);animation:pop .2s ease;overflow:hidden;
+  }
+  @keyframes pop{from{transform:translateY(14px);opacity:0}to{transform:none;opacity:1}}
+  @media(prefers-reduced-motion:reduce){.modal{animation:none}}
+  .modal-head{background:var(--quadro);color:var(--papel);padding:22px 24px;position:relative}
+  .modal-head .reg-badge{
+    font-family:'Space Mono',monospace;font-size:14px;letter-spacing:.1em;text-transform:uppercase;
+    padding:4px 10px;border-radius:999px;color:#10241d;font-weight:700;display:inline-block;margin-bottom:8px;
+  }
+  .modal-head h3{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.7rem;margin:0;line-height:1}
+  .modal-head .sub{color:#bccabf;font-size:.9rem;margin-top:6px;font-family:'Space Mono',monospace}
+  .close{position:absolute;top:16px;right:16px;background:rgba(255,255,255,.12);border:none;color:var(--papel);
+    width:34px;height:34px;border-radius:50%;font-size:1.1rem;cursor:pointer;line-height:1}
+  .close:hover{background:rgba(255,255,255,.22)}
+  .close:focus-visible{outline:2px solid var(--ouro);outline-offset:2px}
+  .modal-body{padding:22px 24px}
+  .stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  @media(max-width:520px){.stat-grid{grid-template-columns:1fr}}
+  .stat{background:var(--branco);border:1.5px solid var(--linha);border-radius:12px;padding:14px}
+  .stat .k{font-family:'Space Mono',monospace;font-size:13.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--tinta-suave)}
+  .stat .v{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.35rem;margin-top:5px;font-variant-numeric:tabular-nums;line-height:1.05}
+  .stat .r{font-family:'Space Mono',monospace;font-size:13px;color:var(--tinta-suave);margin-top:5px}
+  .btn-mun{
+    margin-top:16px;width:100%;padding:13px;border:none;border-radius:12px;background:var(--ouro);
+    color:#3a2c05;font-weight:700;font-family:inherit;font-size:.95rem;cursor:pointer;transition:.15s;
+  }
+  .btn-mun:hover{background:var(--ouro-escuro);color:#fff}
+  .btn-mun:focus-visible{outline:2px solid var(--tinta);outline-offset:2px}
+  .btn-mun:disabled{opacity:.55;cursor:default}
+
+  .mun-search{width:100%;padding:10px 12px;border:1.5px solid var(--linha);border-radius:10px;margin:4px 0 12px;font-family:inherit;background:var(--branco)}
+  .mun-search:focus{outline:2px solid var(--ouro);border-color:var(--ouro)}
+  .mun-list{max-height:340px;overflow:auto;border:1.5px solid var(--linha);border-radius:12px;background:var(--branco)}
+  .mun-row{display:flex;align-items:center;gap:12px;padding:9px 14px;border-bottom:1px solid var(--linha);font-size:.9rem}
+  .mun-row:last-child{border-bottom:none}
+  .mun-row .rank{font-family:'Space Mono',monospace;font-size:14px;color:var(--tinta-suave);width:30px}
+  .mun-row .mn{flex:1}
+  .mun-row .mp{font-variant-numeric:tabular-nums;font-weight:600}
+  .mun-row.capital .mn::after{content:" ★";color:var(--ouro)}
+
+  .msg{padding:14px 16px;border-radius:10px;font-size:.9rem;margin:8px 0}
+  .msg.err{background:#fbe9e2;border:1.5px solid #e0a58c;color:#8a3d1f}
+  .msg.info{background:#eef2ec;border:1.5px solid var(--linha);color:var(--tinta-suave)}
+
+  /* ---------- FOOTER ---------- */
+  footer{background:var(--quadro);color:#bccabf;padding:34px 0;margin-top:20px;font-size:.85rem}
+  footer .fonte{color:var(--papel);font-weight:600;margin-bottom:6px}
+  footer .brand{font-family:'Bricolage Grotesque',sans-serif;color:var(--ouro);font-weight:800;margin-top:14px}
+  footer .brand span{color:#8ea699;font-weight:400;font-family:'Space Mono',monospace;font-size:.8rem;display:block;margin-top:2px}
+  a.ext{color:var(--ouro)}
+
+  /* topbar marca + botão site */
+  .topbar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:26px;flex-wrap:wrap}
+  .brand-top{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;color:var(--ouro);font-size:1.05rem;letter-spacing:-.01em}
+  .brand-top em{color:#6f8578;font-style:normal;font-weight:400;margin:0 5px}
+  .btn-site{display:inline-flex;align-items:center;gap:7px;text-decoration:none;font-family:'Space Mono',monospace;font-size:15px;letter-spacing:.02em;color:var(--quadro);background:var(--ouro);padding:9px 15px;border-radius:999px;font-weight:700;transition:.15s;border:1.5px solid var(--ouro);white-space:nowrap}
+  .btn-site:hover{background:transparent;color:var(--ouro)}
+  .top-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  .btn-inst{background:transparent;color:var(--ouro);border:1.5px solid var(--ouro)}
+  .btn-inst:hover{background:var(--ouro);color:var(--quadro)}
+  .btn-site:focus-visible{outline:2px solid #fff;outline-offset:2px}
+
+  /* educação superior federal */
+  .edu-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin-top:22px}
+  @media(max-width:640px){.edu-grid{grid-template-columns:1fr}}
+  .edu-card{background:var(--branco);border:1.5px solid var(--linha);border-radius:16px;padding:22px 22px 20px;border-top:4px solid var(--ouro)}
+  .edu-num{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:3rem;line-height:.9;color:var(--quadro);font-variant-numeric:tabular-nums}
+  .edu-lab{font-weight:600;font-size:1.05rem;margin:6px 0 12px}
+  .edu-note{font-size:.82rem;color:var(--tinta-suave);line-height:1.45}
+
+  /* bloco de universidades no modal */
+  .univ-block{margin-top:16px;background:var(--branco);border:1.5px solid var(--linha);border-radius:12px;padding:14px 16px}
+  .univ-h{font-family:'Space Mono',monospace;font-size:14px;letter-spacing:.08em;text-transform:uppercase;color:var(--tinta-suave);margin-bottom:10px}
+  .univ-list{list-style:none;margin:0;padding:0;max-height:230px;overflow:auto}
+  .univ-list li{font-size:.88rem;padding:6px 0;border-bottom:1px solid var(--linha);line-height:1.3}
+  .univ-list li:last-child{border-bottom:none}
+  .univ-list b{font-family:'Space Mono',monospace;color:var(--quadro);margin-right:6px}
+  .cefet{font-size:12px;font-family:'Space Mono',monospace;background:var(--linha);color:var(--tinta-suave);padding:1px 6px;border-radius:6px;text-transform:uppercase;letter-spacing:.05em;white-space:nowrap}
+  .univ-fonte{font-family:'Space Mono',monospace;font-size:13px;color:var(--tinta-suave);margin-top:10px;line-height:1.4}
+  .univ-block.estadual{border-top:4px solid var(--sudeste)}
+  .univ-block.instituto{border-top:4px solid var(--norte)}
+  .semuni{font-size:.9rem;color:var(--tinta-suave);padding:6px 2px;line-height:1.45}
+  .univ-block.economia{border-top:4px solid var(--ouro-escuro)}
+  .atv-bar{display:flex;height:22px;border-radius:6px;overflow:hidden;border:1px solid var(--linha);margin:4px 0 12px}
+  .atv-bar span{display:block;height:100%}
+  .atv-legs{display:flex;flex-wrap:wrap;gap:14px}
+  .atv-leg{font-size:.85rem;display:flex;align-items:center;gap:6px;color:var(--tinta-suave)}
+  .atv-leg .sw{width:12px;height:12px;border-radius:3px;display:inline-block}
+  .atv-leg b{color:var(--tinta);font-variant-numeric:tabular-nums;margin-left:2px}
+  .atv-voc{font-size:.88rem;margin-top:12px;color:var(--tinta);background:#f5efdd;border:1px solid var(--linha);border-radius:8px;padding:9px 11px;line-height:1.4}
+  /* segurança pública */
+  .viol-wrap{background:var(--branco);border:1.5px solid var(--linha);border-top:4px solid #9e3b2f;border-radius:16px;padding:22px;margin-top:16px}
+  .viol-head{font-weight:700;margin-bottom:12px;font-size:1.02rem}
+  .viol-list{margin:0;padding:0;list-style:none}
+  .viol-item{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--linha)}
+  .viol-item:last-child{border-bottom:none}
+  .viol-item .vpos{font-family:'Space Mono',monospace;font-weight:700;color:#9e3b2f;width:34px;font-size:1rem}
+  .viol-item .vcity{flex:1;font-weight:600}
+  .viol-item .vuf{font-family:'Space Mono',monospace;font-size:.8rem;color:var(--tinta-suave);background:var(--linha);padding:2px 8px;border-radius:6px}
+  .viol-item .vrate{font-variant-numeric:tabular-nums;font-weight:700;color:#9e3b2f;min-width:52px;text-align:right}
+  .viol-note{font-size:.82rem;color:var(--tinta-suave);margin-top:14px;line-height:1.5}
+  .univ-block.seguranca{border-top:4px solid #9e3b2f}
+  .seg-taxa{font-size:.92rem;margin-bottom:8px}
+  .seg-sub2{font-family:'Space Mono',monospace;font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:var(--tinta-suave);margin:8px 0 4px}
+  /* clima */
+  .univ-block.clima{border-top:4px solid #3a7d8c}
+  .clima-tipo{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.05rem;color:var(--quadro);line-height:1.15}
+  .clima-desc{font-size:.9rem;color:var(--tinta-suave);margin:5px 0 9px;line-height:1.4}
+  .clima-faixa{font-size:.95rem}
+  .clima-faixa b{font-variant-numeric:tabular-nums;color:#3a7d8c}
+
+  /* controles extras */
+  .ordenar{padding:11px 14px;border:1.5px solid var(--linha);border-radius:10px;background:var(--branco);font-family:inherit;font-size:.92rem;color:var(--tinta);cursor:pointer}
+  .ordenar:focus{outline:2px solid var(--ouro);border-color:var(--ouro)}
+  .tool-btn{padding:10px 14px;border:1.5px solid var(--linha);border-radius:10px;background:var(--branco);font-family:inherit;font-size:.9rem;color:var(--tinta);cursor:pointer;transition:.15s;white-space:nowrap}
+  .tool-btn:hover{border-color:var(--ouro)}
+  .tool-btn.on{background:var(--ouro);border-color:var(--ouro);color:#3a2c05;font-weight:700}
+  .tool-btn:focus-visible{outline:2px solid var(--ouro);outline-offset:2px}
+  .fav-star{position:absolute;top:10px;right:12px;font-size:1.2rem;color:var(--linha);line-height:1;z-index:2}
+  .fav-star.on{color:var(--ouro)}
+  .fav-star:hover{color:var(--ouro-escuro)}
+  .tile .row.metric{margin-top:6px;padding-top:8px;border-top:1px dashed var(--linha)}
+  .tile .row.metric b{color:var(--ouro-escuro)}
+
+  /* busca global de município */
+  .mun-global{position:relative;margin:0 0 20px}
+  .mun-global svg{position:absolute;left:12px;top:15px;opacity:.45}
+  .mun-global input{width:100%;padding:12px 14px 12px 38px;border:1.5px solid var(--linha);border-radius:10px;background:var(--branco);font-family:inherit;font-size:.95rem;color:var(--tinta)}
+  .mun-global input:focus{outline:2px solid var(--ouro);border-color:var(--ouro)}
+  .mun-global-res{display:none;margin-top:8px;border:1.5px solid var(--linha);border-radius:12px;background:var(--branco);max-height:340px;overflow:auto}
+  .mun-global-res.show{display:block}
+  .mun-g-item{display:flex;align-items:center;gap:12px;padding:10px 14px;border-bottom:1px solid var(--linha);font-size:.92rem}
+  .mun-g-item:last-child{border-bottom:none}
+  .mun-g-item .mn{flex:1;font-weight:600}
+  .mun-g-item .uf{font-family:'Space Mono',monospace;font-size:.78rem;color:var(--tinta-suave);background:var(--linha);padding:2px 8px;border-radius:6px}
+  .mun-g-item .mp{font-variant-numeric:tabular-nums;font-weight:600}
+  .mun-g-item.muted{color:var(--tinta-suave);font-size:.82rem}
+
+  /* botões do cabeçalho do modal */
+  .mhead-tools{position:absolute;top:16px;right:58px;display:flex;gap:8px}
+  .mh-btn{background:rgba(255,255,255,.12);border:none;color:var(--papel);width:34px;height:34px;border-radius:50%;font-size:1rem;cursor:pointer;line-height:1;transition:.15s}
+  .mh-btn:hover{background:rgba(255,255,255,.24)}
+  .mh-btn.on{background:var(--ouro);color:#3a2c05}
+  .mh-btn:focus-visible{outline:2px solid var(--ouro);outline-offset:2px}
+
+  /* identidade & território */
+  .univ-block.ident{border-top:4px solid var(--ouro)}
+  .ident-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px 18px}
+  @media(max-width:520px){.ident-grid{grid-template-columns:1fr}}
+  .ident-grid > div{display:flex;justify-content:space-between;gap:10px;padding:5px 0;border-bottom:1px solid var(--linha);font-size:.9rem}
+  .ident-grid span{color:var(--tinta-suave)}
+  .ident-grid b{text-align:right;font-weight:600}
+
+  /* comparador */
+  .cmp-selects{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+  .cmp-selects select{flex:1;padding:11px 12px;border:1.5px solid var(--linha);border-radius:10px;background:var(--branco);font-family:inherit;font-size:.92rem;color:var(--tinta);min-width:0}
+  .cmp-selects select:focus{outline:2px solid var(--ouro);border-color:var(--ouro)}
+  .cmp-x{font-family:'Space Mono',monospace;color:var(--tinta-suave)}
+  .cmp-table{border:1.5px solid var(--linha);border-radius:12px;overflow:hidden;background:var(--branco)}
+  .cmp-row{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:8px;padding:10px 14px;border-bottom:1px solid var(--linha);font-size:.9rem;align-items:center}
+  .cmp-row:last-child{border-bottom:none}
+  .cmp-row > span{color:var(--tinta-suave)}
+  .cmp-row > b{font-weight:600;font-variant-numeric:tabular-nums;text-align:right}
+  .cmp-row.cmp-head{background:var(--quadro)}
+  .cmp-row.cmp-head b{color:var(--ouro);font-family:'Space Mono',monospace;text-align:right}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="topbar">
+      <span class="brand-top">DeCastro <em>|</em> O Canal do Conhecimento</span>
+      <div class="top-actions">
+        <button class="btn-site btn-inst" id="btnInstalar" style="display:none">⤓ Instalar app</button>
+        <a class="btn-site" href="https://www.lojasdecastro.com.br" target="_blank" rel="noopener">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 12l9-9 9 9"/><path d="M5 10v10h14V10"/></svg>
+          Voltar ao site
+        </a>
+      </div>
+    </div>
+    <p class="eyebrow">Almanaque de dados oficiais</p>
+    <h1>Brasil na<br>Palma da Mão</h1>
+    <p class="lead">Estados, capitais, população, municípios e PIB — carregados ao vivo da base de dados abertos do IBGE. Cada indicador mostra o ano de referência.</p>
+    <span class="fonte-badge"><span class="dot"></span> FONTE: IBGE · DADOS EM TEMPO REAL</span>
+
+    <div class="brasil-stats" id="brasilStats">
+      <div class="bstat"><div class="label">População</div><div class="value" id="brPop">—</div><div class="ref" id="brPopRef">carregando…</div></div>
+      <div class="bstat"><div class="label">Unidades federativas</div><div class="value" id="brUf">27</div><div class="ref">26 estados + DF</div></div>
+      <div class="bstat"><div class="label">Municípios</div><div class="value" id="brMun">—</div><div class="ref" id="brMunRef">carregando…</div></div>
+      <div class="bstat"><div class="label">PIB</div><div class="value" id="brPib">—</div><div class="ref" id="brPibRef">carregando…</div></div>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <section>
+    <div class="sec-head">
+      <div>
+        <h2>As 27 unidades da federação</h2>
+        <p class="sec-sub">Toque em um estado para ver capital, população, municípios e PIB — e abrir a lista de municípios.</p>
+      </div>
+    </div>
+
+    <div class="controls">
+      <div class="search">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+        <input id="busca" type="text" placeholder="Buscar estado ou sigla (ex.: Maranhão, MA)" aria-label="Buscar estado">
+      </div>
+      <select id="ordenar" class="ordenar" aria-label="Ordenar estados">
+        <option value="nome">Ordenar: A–Z</option>
+        <option value="pop">População (maior)</option>
+        <option value="pib">PIB (maior)</option>
+        <option value="pibpc">PIB per capita (maior)</option>
+        <option value="area">Área (maior)</option>
+        <option value="dens">Densidade (maior)</option>
+        <option value="mvi">Violência MVI (maior)</option>
+      </select>
+      <button class="tool-btn" id="btnFav" aria-pressed="false">☆ Favoritos</button>
+      <button class="tool-btn" id="btnComparar">⇄ Comparar</button>
+      <div class="legenda" id="legenda"></div>
+    </div>
+
+    <div class="mun-global">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+      <input id="munGlobal" type="text" placeholder="Buscar qualquer município do Brasil (ex.: Imperatriz, Sobral)…" aria-label="Buscar município">
+      <div id="munGlobalRes" class="mun-global-res"></div>
+    </div>
+
+    <div class="grid" id="grid" aria-live="polite"></div>
+    <div id="gridMsg"></div>
+  </section>
+
+  <section id="edu">
+    <div class="sec-head"><div>
+      <h2>Educação superior federal</h2>
+      <p class="sec-sub">Abra um estado acima para ver as universidades federais e estaduais com sede nele. Aqui, os totais nacionais — com fonte e ressalvas explícitas.</p>
+    </div></div>
+    <div class="edu-grid">
+      <div class="edu-card">
+        <div class="edu-num">69</div>
+        <div class="edu-lab">universidades federais</div>
+        <div class="edu-note">Fonte: Andifes (jan/2025). Novas universidades federais foram criadas / estão em implantação em 2025–2026, então o número pode ser maior hoje — você deve verificar o dado atual no e-MEC do MEC.</div>
+      </div>
+      <div class="edu-card">
+        <div class="edu-num">38</div>
+        <div class="edu-lab">Institutos Federais</div>
+        <div class="edu-note">Número da criação (Lei 11.892/2008), com pelo menos um em cada estado e no DF. Fontes recentes divergem: o MEC cita 39 e outras fontes, 41 (após o IF do Mato Grosso do Sul e o IF do Acre). Recomendo verificar no MEC.</div>
+      </div>
+      <div class="edu-card">
+        <div class="edu-num">~41</div>
+        <div class="edu-lab">universidades estaduais</div>
+        <div class="edu-note">Presentes em 22 estados e no DF (a UnDF é recente). Quatro estados não têm universidade estadual: Acre, Espírito Santo, Rondônia e Sergipe. O total varia por fonte (40 a 44). Compilação de fontes públicas (2024–2026) — confira no e-MEC.</div>
+      </div>
+    </div>
+  </section>
+
+  <section id="seguranca">
+    <div class="sec-head"><div>
+      <h2>Segurança pública</h2>
+      <p class="sec-sub">Violência letal no Brasil segundo o 20º Anuário Brasileiro de Segurança Pública (FBSP), com dados de 2025. Abra um estado acima para ver seus municípios no ranking.</p>
+    </div></div>
+    <div class="edu-grid">
+      <div class="edu-card">
+        <div class="edu-num">19,1</div>
+        <div class="edu-lab">mortes violentas / 100 mil hab. (2025)</div>
+        <div class="edu-note">Foram 40.775 mortes violentas intencionais (MVI) no Brasil em 2025 — queda de 8,2% e a menor taxa desde 2012. A MVI reúne homicídio doloso, feminicídio, latrocínio, lesão corporal seguida de morte e mortes por intervenção policial.</div>
+      </div>
+      <div class="edu-card">
+        <div class="edu-num">42,5</div>
+        <div class="edu-lab">Amapá — maior taxa estadual</div>
+        <div class="edu-note">Em seguida vêm Bahia (36,8) e Ceará (34,7). Norte e Nordeste concentram as maiores taxas de violência letal; Sudeste e Sul, as menores. Taxas em MVI por 100 mil hab. (2025).</div>
+      </div>
+    </div>
+    <div class="viol-wrap">
+      <div class="viol-head">10 cidades com maior taxa de MVI em 2025 · municípios com 100 mil+ habitantes</div>
+      <ul class="viol-list" id="violList"></ul>
+      <div class="viol-note">As dez estão no Nordeste (5 na Bahia, 3 no Ceará, 1 em Pernambuco, 1 na Paraíba). O ranking considera apenas municípios com 100 mil habitantes ou mais — cidades menores ficam de fora para evitar distorção estatística, então isto <b>não</b> é um retrato de todas as cidades. O FBSP observa que parte dessas taxas é influenciada por mortes decorrentes de intervenção policial e por rotas do tráfico próximas a portos. Fonte: 20º Anuário Brasileiro de Segurança Pública (FBSP), publicado em jul/2026, com dados de 2025. É a foto de um único ano — os rankings mudam.</div>
+    </div>
+  </section>
+
+  <section id="social">
+    <div class="sec-head"><div>
+      <h2>Indicadores sociais</h2>
+      <p class="sec-sub">Renda e alfabetização segundo o IBGE. Abra um estado acima para ver a alfabetização local.</p>
+    </div></div>
+    <div class="edu-grid">
+      <div class="edu-card">
+        <div class="edu-num">R$ 1.625</div>
+        <div class="edu-lab">renda domiciliar per capita — Brasil (2022)</div>
+        <div class="edu-note">Vai de R$ 814 no Maranhão (a menor) a R$ 2.913 no Distrito Federal (a maior). Valor nominal mensal por pessoa. Fonte: IBGE — PNAD Contínua, rendimento domiciliar per capita 2022.</div>
+      </div>
+      <div class="edu-card">
+        <div class="edu-num" id="alfabNum">—</div>
+        <div class="edu-lab">taxa de alfabetização — Brasil</div>
+        <div class="edu-note" id="alfabNote">Pessoas de 15 anos ou mais que sabem ler e escrever. Fonte: IBGE — Censo 2022. Carregando…</div>
+      </div>
+    </div>
+    <div class="viol-note" style="margin-top:14px">O IDHM (Índice de Desenvolvimento Humano) ficou de fora desta versão: as fontes divergem entre as edições 2021 e 2022 do Atlas Brasil (PNUD) e o dado não está na API do IBGE — prefiro não cravar números disputados. A renda por estado (todas as 27 UFs) também entra quando eu consolidar a tabela oficial completa.</div>
+  </section>
+
+  <section style="padding-top:8px">
+    <div class="camadas">
+      <h3>Próximas camadas do app</h3>
+      <p>O núcleo acima é 100% IBGE ao vivo. As camadas abaixo dependem de curadoria manual e virão sempre com <b>ano e fonte visíveis</b> na tela — nada de dado sem origem.</p>
+      <div class="camada-chips">
+        <div class="cchip"><b>Prefeitos</b><span>mandato 2025–2028 · base TSE</span></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="fonte">Fonte: Instituto Brasileiro de Geografia e Estatística (IBGE) — API de dados abertos.</div>
+    Os números de população, municípios e PIB são consultados em tempo real; o ano de referência aparece em cada indicador. Capitais e nomes das unidades são fatos estáveis embutidos no app.
+    <div style="margin-top:10px;font-size:.8rem">Sabemos que os dados curados (governadores, prefeitos, segurança) ainda não estão neste app — serão adicionados com data e origem explícitas.</div>
+    <div class="brand">DeCastro | O Canal do Conhecimento<span>Brasil na Palma da Mão · v1 — núcleo IBGE</span></div>
+  </div>
+</footer>
+
+<!-- MODAL ESTADO -->
+<div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-labelledby="mTitle">
+  <div class="modal">
+    <div class="modal-head" id="mHead">
+      <span class="reg-badge" id="mReg"></span>
+      <h3 id="mTitle"></h3>
+      <div class="sub" id="mSub"></div>
+      <div class="mhead-tools">
+        <button class="mh-btn" id="mFav" aria-label="Favoritar estado">☆</button>
+        <button class="mh-btn" id="mSpeak" aria-label="Ouvir ficha">🔊</button>
+      </div>
+      <button class="close" id="mClose" aria-label="Fechar">✕</button>
+    </div>
+    <div class="modal-body" id="mBody"></div>
+  </div>
+</div>
+
+<!-- MODAL COMPARADOR -->
+<div class="overlay" id="cmpOverlay" role="dialog" aria-modal="true" aria-labelledby="cmpTitle">
+  <div class="modal">
+    <div class="modal-head" id="cmpHead">
+      <h3 id="cmpTitle" style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.6rem;margin:0">Comparar estados</h3>
+      <div class="sub" style="color:#bccabf;font-family:'Space Mono',monospace">lado a lado</div>
+      <button class="close" id="cmpClose" aria-label="Fechar">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="cmp-selects">
+        <select id="cmpA" aria-label="Primeiro estado"></select>
+        <span class="cmp-x">×</span>
+        <select id="cmpB" aria-label="Segundo estado"></select>
+      </div>
+      <div id="cmpTable" class="cmp-table"></div>
+      <div class="univ-fonte" style="margin-top:12px">Dados: IBGE (população, PIB, municípios), áreas do IBGE e FBSP (violência, 2025). Valores ao vivo aparecem conforme carregam.</div>
+    </div>
+  </div>
+</div>
+
+<script>
+"use strict";
+const API = 'https://servicodados.ibge.gov.br/api';
+const store = { estados:[], regFiltro:null, munsPorUf:{}, pop:null, pib:null, munPop:null, atv:null, meta5938:null, ordenar:'nome', soFav:false, _favs:[], alfab:null };
+
+const REGIOES = {
+  1:{nome:'Norte',       cor:'#2e7d5b'},
+  2:{nome:'Nordeste',    cor:'#c6633a'},
+  3:{nome:'Sudeste',     cor:'#2f5d74'},
+  4:{nome:'Sul',         cor:'#6a4a6e'},
+  5:{nome:'Centro-Oeste',cor:'#b8892b'}
+};
+
+// Capitais — fatos estáveis (código IBGE do estado -> capital)
+const CAPITAIS = {
+  11:'Porto Velho',12:'Rio Branco',13:'Manaus',14:'Boa Vista',15:'Belém',16:'Macapá',17:'Palmas',
+  21:'São Luís',22:'Teresina',23:'Fortaleza',24:'Natal',25:'João Pessoa',26:'Recife',27:'Maceió',
+  28:'Aracaju',29:'Salvador',31:'Belo Horizonte',32:'Vitória',33:'Rio de Janeiro',35:'São Paulo',
+  41:'Curitiba',42:'Florianópolis',43:'Porto Alegre',50:'Campo Grande',51:'Cuiabá',52:'Goiânia',53:'Brasília'
+};
+
+// Universidades federais por UF — fonte: Andifes (lista de associadas, jan/2025).
+// CEFET-MG e CEFET-RJ são centros federais (não universidades), sinalizados no app.
+const UNIV_FONTE = 'Andifes (jan/2025)';
+const UNIVERSIDADES = {
+  AC:[["UFAC","Universidade Federal do Acre"]],
+  AL:[["UFAL","Universidade Federal de Alagoas"]],
+  AP:[["UNIFAP","Universidade Federal do Amapá"]],
+  AM:[["UFAM","Universidade Federal do Amazonas"]],
+  BA:[["UFBA","Universidade Federal da Bahia"],["UFOB","Universidade Federal do Oeste da Bahia"],["UFRB","Universidade Federal do Recôncavo da Bahia"],["UFSB","Universidade Federal do Sul da Bahia"]],
+  CE:[["UFC","Universidade Federal do Ceará"],["UFCA","Universidade Federal do Cariri"],["UNILAB","Univ. da Integração Internacional da Lusofonia Afro-Brasileira"]],
+  DF:[["UnB","Universidade de Brasília"]],
+  ES:[["UFES","Universidade Federal do Espírito Santo"]],
+  GO:[["UFG","Universidade Federal de Goiás"],["UFCat","Universidade Federal de Catalão"],["UFJ","Universidade Federal de Jataí"]],
+  MA:[["UFMA","Universidade Federal do Maranhão"]],
+  MT:[["UFMT","Universidade Federal de Mato Grosso"],["UFR","Universidade Federal de Rondonópolis"]],
+  MS:[["UFMS","Universidade Federal de Mato Grosso do Sul"],["UFGD","Universidade Federal da Grande Dourados"]],
+  MG:[["UFMG","Universidade Federal de Minas Gerais"],["UFJF","Universidade Federal de Juiz de Fora"],["UFLA","Universidade Federal de Lavras"],["UFOP","Universidade Federal de Ouro Preto"],["UFSJ","Universidade Federal de São João del-Rei"],["UFTM","Universidade Federal do Triângulo Mineiro"],["UFU","Universidade Federal de Uberlândia"],["UFV","Universidade Federal de Viçosa"],["UNIFAL-MG","Universidade Federal de Alfenas"],["UNIFEI","Universidade Federal de Itajubá"],["UFVJM","Univ. Federal dos Vales do Jequitinhonha e Mucuri"],["CEFET-MG","Centro Federal de Educação Tecnológica de Minas Gerais"]],
+  PA:[["UFPA","Universidade Federal do Pará"],["UFOPA","Universidade Federal do Oeste do Pará"],["UFRA","Universidade Federal Rural da Amazônia"],["UNIFESSPA","Universidade Federal do Sul e Sudeste do Pará"]],
+  PB:[["UFPB","Universidade Federal da Paraíba"],["UFCG","Universidade Federal de Campina Grande"]],
+  PR:[["UFPR","Universidade Federal do Paraná"],["UTFPR","Universidade Tecnológica Federal do Paraná"],["UNILA","Univ. Federal da Integração Latino-Americana"]],
+  PE:[["UFPE","Universidade Federal de Pernambuco"],["UFRPE","Universidade Federal Rural de Pernambuco"],["UNIVASF","Universidade Federal do Vale do São Francisco"],["UFAPE","Universidade Federal do Agreste de Pernambuco"]],
+  PI:[["UFPI","Universidade Federal do Piauí"],["UFDPar","Universidade Federal do Delta do Parnaíba"]],
+  RJ:[["UFRJ","Universidade Federal do Rio de Janeiro"],["UFF","Universidade Federal Fluminense"],["UFRRJ","Universidade Federal Rural do Rio de Janeiro"],["UNIRIO","Univ. Federal do Estado do Rio de Janeiro"],["CEFET-RJ","Centro Federal de Educ. Tecnológica Celso Suckow da Fonseca"]],
+  RN:[["UFRN","Universidade Federal do Rio Grande do Norte"],["UFERSA","Universidade Federal Rural do Semi-Árido"]],
+  RS:[["UFRGS","Universidade Federal do Rio Grande do Sul"],["UFSM","Universidade Federal de Santa Maria"],["UFPel","Universidade Federal de Pelotas"],["FURG","Universidade Federal do Rio Grande"],["UFCSPA","Univ. Federal de Ciências da Saúde de Porto Alegre"],["UNIPAMPA","Universidade Federal do Pampa"]],
+  RO:[["UNIR","Universidade Federal de Rondônia"]],
+  RR:[["UFRR","Universidade Federal de Roraima"]],
+  SC:[["UFSC","Universidade Federal de Santa Catarina"],["UFFS","Universidade Federal da Fronteira Sul"]],
+  SP:[["UNIFESP","Universidade Federal de São Paulo"],["UFSCar","Universidade Federal de São Carlos"],["UFABC","Universidade Federal do ABC"]],
+  SE:[["UFS","Universidade Federal de Sergipe"]],
+  TO:[["UFT","Universidade Federal do Tocantins"],["UFNT","Universidade Federal do Norte do Tocantins"]]
+};
+
+// Universidades estaduais por UF — compilado de Wikipédia e portais públicos (2024–2026).
+// Total nacional varia (40 a 44) conforme a fonte; app lista as instituições consolidadas.
+const ESTADUAIS = {
+  AC:[],
+  AL:[["UNEAL","Universidade Estadual de Alagoas"],["UNCISAL","Univ. Estadual de Ciências da Saúde de Alagoas"]],
+  AP:[["UEAP","Universidade do Estado do Amapá"]],
+  AM:[["UEA","Universidade do Estado do Amazonas"]],
+  BA:[["UNEB","Universidade do Estado da Bahia"],["UEFS","Universidade Estadual de Feira de Santana"],["UESC","Universidade Estadual de Santa Cruz"],["UESB","Universidade Estadual do Sudoeste da Bahia"]],
+  CE:[["UECE","Universidade Estadual do Ceará"],["URCA","Universidade Regional do Cariri"],["UVA","Universidade Estadual Vale do Acaraú"]],
+  DF:[["UnDF","Universidade do Distrito Federal Jorge Amaury (recente)"]],
+  ES:[],
+  GO:[["UEG","Universidade Estadual de Goiás"]],
+  MA:[["UEMA","Universidade Estadual do Maranhão"],["UEMASUL","Univ. Estadual da Região Tocantina do Maranhão"]],
+  MT:[["UNEMAT","Universidade do Estado de Mato Grosso"]],
+  MS:[["UEMS","Universidade Estadual de Mato Grosso do Sul"]],
+  MG:[["UEMG","Universidade do Estado de Minas Gerais"],["UNIMONTES","Universidade Estadual de Montes Claros"]],
+  PA:[["UEPA","Universidade do Estado do Pará"]],
+  PB:[["UEPB","Universidade Estadual da Paraíba"]],
+  PR:[["UEL","Universidade Estadual de Londrina"],["UEM","Universidade Estadual de Maringá"],["UEPG","Universidade Estadual de Ponta Grossa"],["UNIOESTE","Universidade Estadual do Oeste do Paraná"],["UNICENTRO","Universidade Estadual do Centro-Oeste"],["UNESPAR","Universidade Estadual do Paraná"],["UENP","Universidade Estadual do Norte do Paraná"]],
+  PE:[["UPE","Universidade de Pernambuco"]],
+  PI:[["UESPI","Universidade Estadual do Piauí"]],
+  RJ:[["UERJ","Universidade do Estado do Rio de Janeiro"],["UENF","Univ. Estadual do Norte Fluminense Darcy Ribeiro"]],
+  RN:[["UERN","Universidade do Estado do Rio Grande do Norte"]],
+  RS:[["UERGS","Universidade Estadual do Rio Grande do Sul"]],
+  RO:[],
+  RR:[["UERR","Universidade Estadual de Roraima"]],
+  SC:[["UDESC","Universidade do Estado de Santa Catarina"]],
+  SP:[["USP","Universidade de São Paulo"],["UNICAMP","Universidade Estadual de Campinas"],["UNESP","Universidade Estadual Paulista Júlio de Mesquita Filho"],["UNIVESP","Universidade Virtual do Estado de São Paulo"]],
+  SE:[],
+  TO:[["UNITINS","Universidade Estadual do Tocantins"]]
+};
+
+// Institutos Federais por UF — fonte: Lei 11.892/2008 (Rede Federal/MEC) e fontes públicas.
+// Cada IF possui vários campi. Total nacional na criação: 38 (o MEC cita 39; outras fontes, 41).
+const INSTITUTOS = {
+  AC:[["IFAC","Instituto Federal do Acre"]],
+  AL:[["IFAL","Instituto Federal de Alagoas"]],
+  AP:[["IFAP","Instituto Federal do Amapá"]],
+  AM:[["IFAM","Instituto Federal do Amazonas"]],
+  BA:[["IFBA","Instituto Federal da Bahia"],["IF Baiano","Instituto Federal Baiano"]],
+  CE:[["IFCE","Instituto Federal do Ceará"]],
+  DF:[["IFB","Instituto Federal de Brasília"]],
+  ES:[["IFES","Instituto Federal do Espírito Santo"]],
+  GO:[["IFG","Instituto Federal de Goiás"],["IF Goiano","Instituto Federal Goiano"]],
+  MA:[["IFMA","Instituto Federal do Maranhão"]],
+  MT:[["IFMT","Instituto Federal de Mato Grosso"]],
+  MS:[["IFMS","Instituto Federal de Mato Grosso do Sul"]],
+  MG:[["IFMG","Instituto Federal de Minas Gerais"],["IFNMG","Instituto Federal do Norte de Minas Gerais"],["IF Sudeste MG","Instituto Federal do Sudeste de Minas Gerais"],["IFSULDEMINAS","Instituto Federal do Sul de Minas Gerais"],["IFTM","Instituto Federal do Triângulo Mineiro"]],
+  PA:[["IFPA","Instituto Federal do Pará"]],
+  PB:[["IFPB","Instituto Federal da Paraíba"]],
+  PR:[["IFPR","Instituto Federal do Paraná"]],
+  PE:[["IFPE","Instituto Federal de Pernambuco"],["IFSertãoPE","Instituto Federal do Sertão Pernambucano"]],
+  PI:[["IFPI","Instituto Federal do Piauí"]],
+  RJ:[["IFRJ","Instituto Federal do Rio de Janeiro"],["IFF","Instituto Federal Fluminense"]],
+  RN:[["IFRN","Instituto Federal do Rio Grande do Norte"]],
+  RS:[["IFRS","Instituto Federal do Rio Grande do Sul"],["IFFar","Instituto Federal Farroupilha"],["IFSul","Instituto Federal Sul-rio-grandense"]],
+  RO:[["IFRO","Instituto Federal de Rondônia"]],
+  RR:[["IFRR","Instituto Federal de Roraima"]],
+  SC:[["IFSC","Instituto Federal de Santa Catarina"],["IFC","Instituto Federal Catarinense"]],
+  SP:[["IFSP","Instituto Federal de São Paulo"]],
+  SE:[["IFS","Instituto Federal de Sergipe"]],
+  TO:[["IFTO","Instituto Federal do Tocantins"]]
+};
+
+// Segurança pública — fonte: 20º Anuário Brasileiro de Segurança Pública (FBSP), jul/2026, dados de 2025.
+// Taxa = Mortes Violentas Intencionais (MVI) por 100 mil habitantes. Ranking de cidades: municípios com 100 mil+ hab.
+const CIDADES_VIOLENTAS = [
+  {pos:1, cidade:'Maranguape', uf:'CE', taxa:100.3},
+  {pos:2, cidade:'Eunápolis', uf:'BA', taxa:85.1},
+  {pos:3, cidade:'Maracanaú', uf:'CE', taxa:80.7},
+  {pos:4, cidade:'Porto Seguro', uf:'BA', taxa:71.2},
+  {pos:5, cidade:'Simões Filho', uf:'BA', taxa:68.1},
+  {pos:6, cidade:'Jequié', uf:'BA', taxa:67.4},
+  {pos:7, cidade:'Caucaia', uf:'CE', taxa:66.6},
+  {pos:8, cidade:'Cabo de Santo Agostinho', uf:'PE', taxa:65.1},
+  {pos:9, cidade:'Santa Rita', uf:'PB', taxa:60.9},
+  {pos:10, cidade:'Juazeiro', uf:'BA', taxa:55.8}
+];
+const ESTADOS_VIOLENTOS = { AP:42.5, BA:36.8, CE:34.7 }; // 3 maiores taxas estaduais (MVI/100 mil, 2025)
+
+// Clima predominante por UF — classificação de Köppen. A faixa de temperatura é TÍPICA do tipo
+// climático (aproximada), não uma medição de estação. Valor exato: Normais Climatológicas do INMET.
+const CLIMA = {
+  AC:{t:'Equatorial úmido (Af/Am)', f:'~24–26 °C', d:'Quente e úmido o ano todo; chuvas abundantes.'},
+  AL:{t:'Litoral tropical (As); sertão semiárido', f:'~24–26 °C', d:'Litoral quente e úmido; interior mais seco.'},
+  AP:{t:'Equatorial (Af/Am)', f:'~26–27 °C', d:'Quente e úmido, alta pluviosidade.'},
+  AM:{t:'Equatorial (Af/Am)', f:'~26–27 °C', d:'Quente e úmido o ano todo; clima de floresta.'},
+  BA:{t:'Semiárido no sertão; tropical no litoral', f:'~23–26 °C', d:'Sertão quente e seco; litoral úmido.'},
+  CE:{t:'Semiárido (BSh); litoral tropical', f:'~26–28 °C', d:'Quente o ano todo; chuvas escassas no sertão.'},
+  DF:{t:'Tropical de savana (Aw)', f:'~21–22 °C', d:'Inverno seco e verão chuvoso; altitude ameniza.'},
+  ES:{t:'Tropical litorâneo (Aw/Am); serras amenas', f:'~23–24 °C', d:'Litoral quente e úmido; serras mais frescas.'},
+  GO:{t:'Tropical de savana (Aw)', f:'~22–24 °C', d:'Estações seca (inverno) e chuvosa (verão) marcadas.'},
+  MA:{t:'Transição equatorial/tropical (Am/Aw)', f:'~26–27 °C', d:'Oeste mais úmido, leste seco; quente o ano todo.'},
+  MT:{t:'Tropical (Aw); norte mais úmido', f:'~24–26 °C', d:'Quente, com inverno seco; norte amazônico.'},
+  MS:{t:'Tropical (Aw); sul subtropical (Cfa)', f:'~23–25 °C', d:'Quente; sul com invernos mais frescos.'},
+  MG:{t:'Tropical de altitude (Cwa/Cwb); norte semiárido', f:'~19–23 °C', d:'Ameno nas serras; norte quente e seco.'},
+  PA:{t:'Equatorial (Af/Am)', f:'~26–27 °C', d:'Quente e úmido; grande volume de chuvas.'},
+  PB:{t:'Litoral tropical (As); sertão semiárido', f:'~25–27 °C', d:'Litoral úmido; sertão quente e seco.'},
+  PR:{t:'Subtropical (Cfa/Cfb)', f:'~17–20 °C', d:'Quatro estações; invernos frios, geadas no interior.'},
+  PE:{t:'Litoral tropical (As); sertão semiárido', f:'~24–26 °C', d:'Litoral úmido; sertão quente e seco.'},
+  PI:{t:'Tropical quente; sertão semiárido', f:'~26–28 °C', d:'Um dos mais quentes; chuvas escassas no sertão.'},
+  RJ:{t:'Tropical litorâneo (Aw/Am); serras amenas', f:'~22–24 °C', d:'Litoral quente e úmido; serra mais fresca.'},
+  RN:{t:'Litoral tropical (As); sertão semiárido', f:'~26–27 °C', d:'Quente e ensolarado; sertão seco.'},
+  RS:{t:'Subtropical (Cfa)', f:'~17–20 °C', d:'Quatro estações marcadas; invernos frios, geadas.'},
+  RO:{t:'Equatorial (Am)', f:'~25–26 °C', d:'Quente e úmido; estação seca curta.'},
+  RR:{t:'Equatorial (Af/Am); savana ao norte', f:'~27–28 °C', d:'Quente; norte com savana (lavrado).'},
+  SC:{t:'Subtropical (Cfa/Cfb)', f:'~17–20 °C', d:'Quatro estações; serras com frio intenso e neve ocasional.'},
+  SP:{t:'Tropical de altitude e subtropical (Cwa/Cfa)', f:'~19–22 °C', d:'Interior e capital amenos; litoral quente e úmido.'},
+  SE:{t:'Litoral tropical (As); sertão semiárido', f:'~25–26 °C', d:'Litoral úmido; sertão quente e seco.'},
+  TO:{t:'Tropical de savana (Aw)', f:'~26–27 °C', d:'Quente, com inverno seco e verão chuvoso.'}
+};
+
+// Área territorial (km²) — fonte: IBGE (áreas territoriais). Densidade é calculada com a população ao vivo.
+const AREA = {
+  AC:164173, AL:27831, AP:142470, AM:1558704, BA:564760, CE:148894, DF:5761, ES:46074, GO:340203,
+  MA:331983, MT:903208, MS:357145, MG:586513, PA:1245832, PB:56585, PR:199298, PE:98067, PI:251756,
+  RJ:43750, RN:52809, RS:281707, RO:237765, RR:223644, SC:95730, SP:248219, SE:21938, TO:277466
+};
+// Deputados federais por UF — distribuição fixa (soma 513; mín. 8, máx. 70). Fonte: Câmara / LC 78-1993.
+const DEPUTADOS = {
+  SP:70, MG:53, RJ:46, BA:39, RS:31, PR:30, PE:25, CE:22, MA:18, PA:17, GO:17, SC:16, PB:12,
+  ES:10, PI:10, AL:9, AC:8, AM:8, AP:8, DF:8, MS:8, MT:8, RN:8, RO:8, RR:8, SE:8, TO:8
+};
+// Bioma predominante por UF (pode haver mais de um).
+const BIOMA = {
+  AC:'Amazônia', AL:'Mata Atlântica e Caatinga', AP:'Amazônia', AM:'Amazônia',
+  BA:'Caatinga, Mata Atlântica e Cerrado', CE:'Caatinga', DF:'Cerrado', ES:'Mata Atlântica',
+  GO:'Cerrado', MA:'Amazônia, Cerrado e Caatinga', MT:'Amazônia, Cerrado e Pantanal',
+  MS:'Cerrado, Mata Atlântica e Pantanal', MG:'Cerrado e Mata Atlântica', PA:'Amazônia',
+  PB:'Caatinga e Mata Atlântica', PR:'Mata Atlântica', PE:'Caatinga e Mata Atlântica',
+  PI:'Caatinga e Cerrado', RJ:'Mata Atlântica', RN:'Caatinga', RS:'Pampa e Mata Atlântica',
+  RO:'Amazônia', RR:'Amazônia', SC:'Mata Atlântica', SP:'Mata Atlântica e Cerrado',
+  SE:'Caatinga e Mata Atlântica', TO:'Cerrado'
+};
+// Fuso horário (a maior parte é UTC−3).
+const FUSO = {
+  AC:'UTC−5', AM:'UTC−4 (oeste UTC−5)', MT:'UTC−4', MS:'UTC−4', RO:'UTC−4', RR:'UTC−4'
+};
+const fusoDe = s => FUSO[s] || 'UTC−3';
+// Gentílico por UF (IBGE).
+const GENTILICO = {
+  AC:'acriano', AL:'alagoano', AP:'amapaense', AM:'amazonense', BA:'baiano', CE:'cearense',
+  DF:'brasiliense', ES:'capixaba', GO:'goiano', MA:'maranhense', MT:'mato-grossense',
+  MS:'sul-mato-grossense', MG:'mineiro', PA:'paraense', PB:'paraibano', PR:'paranaense',
+  PE:'pernambucano', PI:'piauiense', RJ:'fluminense', RN:'potiguar', RS:'gaúcho',
+  RO:'rondoniense', RR:'roraimense', SC:'catarinense', SP:'paulista', SE:'sergipano', TO:'tocantinense'
+};
+
+/* ---------- utilidades ---------- */
+async function jget(url){
+  const r = await fetch(url);
+  if(!r.ok) throw new Error('HTTP '+r.status);
+  return r.json();
+}
+const nf = new Intl.NumberFormat('pt-BR');
+function fmtNum(v){ return (v==null||isNaN(v)) ? '—' : nf.format(v); }
+function fmtReais(v){ // v em reais
+  if(v==null||isNaN(v)) return '—';
+  if(v>=1e12) return 'R$ '+ (v/1e12).toLocaleString('pt-BR',{maximumFractionDigits:2})+' tri';
+  if(v>=1e9)  return 'R$ '+ (v/1e9 ).toLocaleString('pt-BR',{maximumFractionDigits:1})+' bi';
+  if(v>=1e6)  return 'R$ '+ (v/1e6 ).toLocaleString('pt-BR',{maximumFractionDigits:1})+' mi';
+  return 'R$ '+ nf.format(Math.round(v));
+}
+function parseSerie(json, period){
+  const map = new Map();
+  const series = (json && json[0] && json[0].resultados && json[0].resultados[0] && json[0].resultados[0].series) || [];
+  for(const s of series){
+    const raw = s.serie ? s.serie[period] : null;
+    const val = (raw==null||raw==='-'||raw==='...'||raw==='..') ? null : Number(raw);
+    map.set(String(s.localidade.id), val);
+  }
+  return map;
+}
+
+/* ---------- acessores por estado ---------- */
+function ufPop(e){ return store.pop ? store.pop.uf.get(String(e.id)) : null; }
+function ufPibReais(e){ const v = store.pib ? store.pib.ufTotal.get(String(e.id)) : null; return v!=null ? v*store.pib.fator : null; }
+function ufPibPc(e){ return store.pib ? store.pib.ufPc.get(String(e.id)) : null; }
+function ufMun(e){ return store.munsPorUf[e.id] ? store.munsPorUf[e.id].length : null; }
+function ufDens(e){ const a=AREA[e.sigla], p=ufPop(e); return (a&&p!=null) ? p/a : null; }
+function estadoBySigla(s){ return store.estados.find(e=>e.sigla===s); }
+function fmtDens(v){ return v==null ? '—' : v.toLocaleString('pt-BR',{maximumFractionDigits:1})+' hab/km²'; }
+
+/* ---------- favoritos (localStorage, com fallback em memória) ---------- */
+function getFavs(){ try{ return JSON.parse(localStorage.getItem('bpm_favs')||'[]'); }catch(e){ return store._favs; } }
+function saveFavs(f){ store._favs=f; try{ localStorage.setItem('bpm_favs', JSON.stringify(f)); }catch(e){} }
+function isFav(s){ return getFavs().includes(s); }
+function toggleFav(s){ let f=getFavs(); f = f.includes(s) ? f.filter(x=>x!==s) : f.concat(s); saveFavs(f); }
+
+/* ---------- métricas para ordenação ---------- */
+const ORDENS = {
+  nome:'A–Z', pop:'População', pib:'PIB', pibpc:'PIB per capita',
+  area:'Área', dens:'Densidade', mvi:'Violência (MVI)'
+};
+function metricaValor(e, k){
+  switch(k){
+    case 'pop': return ufPop(e);
+    case 'pib': return ufPibReais(e);
+    case 'pibpc': return ufPibPc(e);
+    case 'area': return AREA[e.sigla]!=null?AREA[e.sigla]:null;
+    case 'dens': return ufDens(e);
+    case 'mvi': return ESTADOS_VIOLENTOS[e.sigla]!=null?ESTADOS_VIOLENTOS[e.sigla]:null;
+    default: return null;
+  }
+}
+function metricaTexto(e, k){
+  const v = metricaValor(e,k);
+  if(v==null) return '…';
+  switch(k){
+    case 'pop': return fmtNum(v)+' hab';
+    case 'pib': return fmtReais(v);
+    case 'pibpc': return fmtReais(v);
+    case 'area': return fmtNum(v)+' km²';
+    case 'dens': return fmtDens(v);
+    case 'mvi': return v.toLocaleString('pt-BR')+'/100 mil';
+    default: return '';
+  }
+}
+
+/* ---------- carregamentos IBGE ---------- */
+async function loadEstados(){
+  const list = await jget(`${API}/v1/localidades/estados?orderBy=nome`);
+  store.estados = list;
+  return list;
+}
+async function loadMunicipios(){
+  const list = await jget(`${API}/v1/localidades/municipios`);
+  const porUf = {};
+  for(const m of list){
+    const uf = Math.floor(m.id/100000);
+    (porUf[uf] = porUf[uf] || []).push({id:m.id, nome:m.nome});
+  }
+  store.munsPorUf = porUf;
+  return list.length;
+}
+async function loadPop(){
+  const meta = await jget(`${API}/v3/agregados/6579/metadados`);
+  const period = meta.periodicidade && meta.periodicidade.fim;
+  const varId = ((meta.variaveis||[]).find(v=>/estimad|resident/i.test(v.nome)) || meta.variaveis[0]).id;
+  const [uf, br] = await Promise.all([
+    jget(`${API}/v3/agregados/6579/periodos/${period}/variaveis/${varId}?localidades=N3[all]`),
+    jget(`${API}/v3/agregados/6579/periodos/${period}/variaveis/${varId}?localidades=N1[all]`)
+  ]);
+  store.pop = { period, uf:parseSerie(uf,period), br:parseSerie(br,period) };
+  return store.pop;
+}
+async function getMeta5938(){
+  if(store.meta5938) return store.meta5938;
+  store.meta5938 = await jget(`${API}/v3/agregados/5938/metadados`);
+  return store.meta5938;
+}
+async function loadPib(){
+  const meta = await getMeta5938();
+  const period = meta.periodicidade && meta.periodicidade.fim;
+  const vs = meta.variaveis||[];
+  const vTot = vs.find(v=>/produto interno bruto/i.test(v.nome) && /corrente/i.test(v.nome) && !/per capita/i.test(v.nome))
+            || vs.find(v=>/produto interno bruto/i.test(v.nome) && !/per capita/i.test(v.nome))
+            || vs[0];
+  const vPc  = vs.find(v=>/per capita/i.test(v.nome));
+  const calls = [
+    jget(`${API}/v3/agregados/5938/periodos/${period}/variaveis/${vTot.id}?localidades=N3[all]`),
+    jget(`${API}/v3/agregados/5938/periodos/${period}/variaveis/${vTot.id}?localidades=N1[all]`)
+  ];
+  if(vPc) calls.push(jget(`${API}/v3/agregados/5938/periodos/${period}/variaveis/${vPc.id}?localidades=N3[all]`));
+  const r = await Promise.all(calls);
+  const milReais = /mil/i.test(vTot.unidade||'');
+  store.pib = {
+    period,
+    ufTotal: parseSerie(r[0],period),
+    brTotal: parseSerie(r[1],period),
+    ufPc: vPc ? parseSerie(r[2],period) : new Map(),
+    fator: milReais ? 1000 : 1
+  };
+  return store.pib;
+}
+// Estrutura econômica por setor (VAB). O IBGE não abre por setor em 2022–2023,
+// então o app detecta o ano mais recente com esse detalhe e o exibe.
+async function loadAtividade(){
+  const meta = await getMeta5938();
+  const vs = meta.variaveis||[];
+  const vAgro = vs.find(v=>/valor adicionado.*agropecu/i.test(v.nome));
+  const vInd  = vs.find(v=>/valor adicionado.*ind[úu]stria/i.test(v.nome));
+  const vTot  = vs.find(v=>/valor adicionado.*total/i.test(v.nome));
+  if(!vAgro || !vInd || !vTot) throw new Error('variáveis de VAB não encontradas');
+  // ano mais recente com abertura setorial
+  const probe = await jget(`${API}/v3/agregados/5938/periodos/all/variaveis/${vAgro.id}?localidades=N1[all]`);
+  const serieBr = (probe[0] && probe[0].resultados && probe[0].resultados[0] && probe[0].resultados[0].series && probe[0].resultados[0].series[0] && probe[0].resultados[0].series[0].serie) || {};
+  const anos = Object.keys(serieBr).filter(y=>{const r=serieBr[y]; return r!=null && r!=='-' && r!=='...' && r!=='..';});
+  if(!anos.length) throw new Error('sem período com VAB setorial');
+  const period = anos.sort().slice(-1)[0];
+  const [a,i,t] = await Promise.all([
+    jget(`${API}/v3/agregados/5938/periodos/${period}/variaveis/${vAgro.id}?localidades=N3[all]`),
+    jget(`${API}/v3/agregados/5938/periodos/${period}/variaveis/${vInd.id}?localidades=N3[all]`),
+    jget(`${API}/v3/agregados/5938/periodos/${period}/variaveis/${vTot.id}?localidades=N3[all]`)
+  ]);
+  const ma=parseSerie(a,period), mi=parseSerie(i,period), mt=parseSerie(t,period);
+  const uf=new Map(); let bA=0,bI=0,bT=0;
+  for(const [id,tot] of mt){
+    if(tot==null) continue;
+    const ag=ma.get(id)||0, ind=mi.get(id)||0;
+    uf.set(id,{agro:ag, ind:ind, serv:tot-ag-ind, tot});
+    bA+=ag; bI+=ind; bT+=tot;
+  }
+  store.atv = { period, uf, br:{agro:bA, ind:bI, serv:bT-bA-bI, tot:bT} };
+  return store.atv;
+}
+async function loadAlfab(){
+  const meta = await jget(`${API}/v3/agregados/9543/metadados`);
+  const period = meta.periodicidade && meta.periodicidade.fim;
+  const vs = meta.variaveis||[];
+  const v = vs.find(x=>/alfabetiza/i.test(x.nome)) || vs[0];
+  const [uf, br] = await Promise.all([
+    jget(`${API}/v3/agregados/9543/periodos/${period}/variaveis/${v.id}?localidades=N3[all]`),
+    jget(`${API}/v3/agregados/9543/periodos/${period}/variaveis/${v.id}?localidades=N1[all]`)
+  ]);
+  const mapUf=parseSerie(uf,period);
+  const brVal=parseSerie(br,period).get('1');
+  // trava de plausibilidade: a taxa de alfabetização nacional deve ficar ~80–100%
+  if(brVal==null || brVal<80 || brVal>100) throw new Error('valor implausível para alfabetização');
+  store.alfab = { period, uf: mapUf, br: brVal };
+  return store.alfab;
+}
+async function loadMunPop(){
+  if(store.munPop) return store.munPop;
+  const meta = await jget(`${API}/v3/agregados/6579/metadados`);
+  const period = meta.periodicidade && meta.periodicidade.fim;
+  const varId = ((meta.variaveis||[]).find(v=>/estimad|resident/i.test(v.nome)) || meta.variaveis[0]).id;
+  const json = await jget(`${API}/v3/agregados/6579/periodos/${period}/variaveis/${varId}?localidades=N6[all]`);
+  store.munPop = { period, map: parseSerie(json,period) };
+  return store.munPop;
+}
+
+/* ---------- render ---------- */
+function renderLegenda(){
+  const el = document.getElementById('legenda');
+  el.innerHTML = '';
+  Object.entries(REGIOES).forEach(([id,r])=>{
+    const b = document.createElement('button');
+    b.className='chip-reg';
+    b.style.color = r.cor;
+    b.setAttribute('aria-pressed','false');
+    b.innerHTML = `<span class="swatch" style="background:${r.cor}"></span>${r.nome}`;
+    b.onclick = ()=>{
+      store.regFiltro = (store.regFiltro==id) ? null : id;
+      document.querySelectorAll('.chip-reg').forEach(c=>c.setAttribute('aria-pressed','false'));
+      if(store.regFiltro) b.setAttribute('aria-pressed','true');
+      renderGrid();
+    };
+    el.appendChild(b);
+  });
+}
+
+function renderGrid(){
+  const grid = document.getElementById('grid');
+  const termo = (document.getElementById('busca').value||'').trim().toLowerCase();
+  const ord = store.ordenar || 'nome';
+  grid.innerHTML='';
+  let lista = store.estados.filter(e=>{
+    if(store.regFiltro && String(e.regiao.id)!=String(store.regFiltro)) return false;
+    if(store.soFav && !isFav(e.sigla)) return false;
+    if(termo && !(e.nome.toLowerCase().includes(termo) || e.sigla.toLowerCase().includes(termo))) return false;
+    return true;
+  });
+  if(ord==='nome'){
+    lista.sort((a,b)=>a.nome.localeCompare(b.nome,'pt-BR'));
+  }else{
+    lista.sort((a,b)=>{ const va=metricaValor(a,ord), vb=metricaValor(b,ord);
+      return (vb==null?-Infinity:vb)-(va==null?-Infinity:va); });
+  }
+  if(!lista.length){
+    document.getElementById('gridMsg').innerHTML = '<div class="msg info">'+(store.soFav?'Nenhum estado favoritado ainda — toque na estrela de um estado.':'Nenhum estado corresponde à busca.')+'</div>';
+    return;
+  }
+  document.getElementById('gridMsg').innerHTML='';
+  for(const e of lista){
+    const reg = REGIOES[e.regiao.id] || {nome:'',cor:'#999'};
+    const pop = ufPop(e);
+    const nMun = ufMun(e);
+    const fav = isFav(e.sigla);
+    const metricRow = ord!=='nome'
+      ? `<div class="row metric"><span>${ORDENS[ord]}</span><b>${metricaTexto(e,ord)}</b></div>` : '';
+    const t = document.createElement('button');
+    t.className='tile';
+    t.style.borderLeftColor = reg.cor;
+    t.innerHTML = `
+      <span class="fav-star${fav?' on':''}" data-fav="${e.sigla}" aria-label="Favoritar">${fav?'★':'☆'}</span>
+      <span class="reg-tag" style="color:${reg.cor}">${reg.nome}</span>
+      <div class="sigla" style="color:${reg.cor}">${e.sigla}</div>
+      <div class="nome">${e.nome}</div>
+      <div class="row"><span>Capital</span><b>${CAPITAIS[e.id]||'—'}</b></div>
+      <div class="row"><span>População</span><b>${pop!=null?fmtNum(pop):'…'}</b></div>
+      <div class="row"><span>Municípios</span><b>${nMun!=null?nMun:'…'}</b></div>
+      ${metricRow}`;
+    t.onclick = (ev)=>{
+      if(ev.target && ev.target.classList.contains('fav-star')){
+        ev.stopPropagation(); toggleFav(e.sigla); renderGrid(); return;
+      }
+      abrirEstado(e);
+    };
+    grid.appendChild(t);
+  }
+}
+
+/* ---------- modal estado ---------- */
+function abrirEstado(e){
+  const reg = REGIOES[e.regiao.id] || {nome:'',cor:'#999'};
+  document.getElementById('mHead').style.background = 'linear-gradient(135deg,var(--quadro),'+reg.cor+'55)';
+  const badge = document.getElementById('mReg');
+  badge.textContent = reg.nome; badge.style.background = reg.cor;
+  document.getElementById('mTitle').textContent = e.nome;
+  document.getElementById('mSub').textContent = e.sigla + ' · Capital: ' + (CAPITAIS[e.id]||'—');
+
+  const pop  = store.pop ? store.pop.uf.get(String(e.id)) : null;
+  const nMun = store.munsPorUf[e.id] ? store.munsPorUf[e.id].length : null;
+  const pibT = store.pib ? store.pib.ufTotal.get(String(e.id)) : null;
+  const pibPc= store.pib ? store.pib.ufPc.get(String(e.id)) : null;
+  const popRef = store.pop ? 'Estimativa IBGE '+store.pop.period : '';
+  const pibRef = store.pib ? 'PIB IBGE '+store.pib.period : '';
+
+  const area = AREA[e.sigla], dens = ufDens(e);
+  const alf = store.alfab ? store.alfab.uf.get(String(e.id)) : null;
+  const idHtml = `<div class="univ-block ident">
+      <div class="univ-h">Identidade & território</div>
+      <div class="ident-grid">
+        <div><span>Gentílico</span><b>${GENTILICO[e.sigla]||'—'}</b></div>
+        <div><span>Bioma</span><b>${BIOMA[e.sigla]||'—'}</b></div>
+        <div><span>Área</span><b>${area?fmtNum(area)+' km²':'—'}</b></div>
+        <div><span>Densidade</span><b>${dens!=null?fmtDens(dens):'…'}</b></div>
+        <div><span>Fuso horário</span><b>${fusoDe(e.sigla)}</b></div>
+        <div><span>Deputados federais</span><b>${DEPUTADOS[e.sigla]||'—'}</b></div>
+        <div><span>Alfabetização</span><b>${alf!=null?alf.toLocaleString('pt-BR',{maximumFractionDigits:1})+'%':'…'}</b></div>
+      </div>
+      <div class="univ-fonte">Área: IBGE. Densidade = população ÷ área. Deputados: distribuição fixa (513 no total). Alfabetização: IBGE, Censo 2022 (15 anos ou mais). Bioma predominante — pode haver mais de um.</div>
+    </div>`;
+
+  const us = UNIVERSIDADES[e.sigla] || [];
+  const uItens = us.map(u=>{
+    const isCefet = /^CEFET/.test(u[0]);
+    return `<li><b>${u[0]}</b>${u[1]}${isCefet?' <span class="cefet">centro federal</span>':''}</li>`;
+  }).join('');
+  const nUni = us.filter(u=>!/^CEFET/.test(u[0])).length;
+  const uHtml = `<div class="univ-block">
+      <div class="univ-h">Universidades federais com sede no estado · ${nUni}${us.length>nUni?' (+'+(us.length-nUni)+' CEFET)':''}</div>
+      <ul class="univ-list">${uItens || '<li style="color:var(--tinta-suave)">Sem instituição listada neste recorte.</li>'}</ul>
+      <div class="univ-fonte">Fonte: Andifes (jan/2025) · lista por campus-sede.</div>
+    </div>`;
+
+  const es = ESTADUAIS[e.sigla] || [];
+  const eItens = es.map(u=>`<li><b>${u[0]}</b>${u[1]}</li>`).join('');
+  const eHtml = `<div class="univ-block estadual">
+      <div class="univ-h">Universidades estaduais no estado · ${es.length}</div>
+      ${es.length
+        ? `<ul class="univ-list">${eItens}</ul>`
+        : `<div class="semuni">Este estado não mantém universidade estadual própria.${e.sigla==='ES'?' (O ES tem instituições como FAMES e UnAC, que não são universidades plenas.)':''}</div>`}
+      <div class="univ-fonte">Fontes: Wikipédia e portais públicos (2024–2026). O total nacional varia de 40 a 44 conforme a fonte — verifique no e-MEC.</div>
+    </div>`;
+
+  const atv = store.atv ? store.atv.uf.get(String(e.id)) : null;
+  let aHtml = '';
+  if(atv && atv.tot>0){
+    const pAgro=atv.agro/atv.tot*100, pInd=atv.ind/atv.tot*100, pServ=atv.serv/atv.tot*100;
+    const br=store.atv.br, bAgro=br.agro/br.tot*100, bInd=br.ind/br.tot*100;
+    const setores=[['Agropecuária',pAgro,'var(--norte)'],['Indústria',pInd,'var(--sudeste)'],['Serviços + adm. pública',pServ,'var(--ouro-escuro)']];
+    let voc='';
+    if(pAgro>=bAgro*1.3) voc=`Vocação de destaque: <b>agropecuária</b> pesa ${pAgro.toFixed(0)}% aqui, contra ${bAgro.toFixed(0)}% na média do Brasil.`;
+    else if(pInd>=bInd*1.25) voc=`Vocação de destaque: <b>indústria</b> pesa ${pInd.toFixed(0)}% aqui, contra ${bInd.toFixed(0)}% na média do Brasil.`;
+    const barra=setores.map(s=>`<span style="width:${s[1].toFixed(1)}%;background:${s[2]}" title="${s[0]}: ${s[1].toFixed(1)}%"></span>`).join('');
+    const legs=setores.map(s=>`<div class="atv-leg"><span class="sw" style="background:${s[2]}"></span>${s[0]}<b>${s[1].toFixed(1)}%</b></div>`).join('');
+    aHtml=`<div class="univ-block economia">
+      <div class="univ-h">Estrutura econômica · VAB ${store.atv.period}</div>
+      <div class="atv-bar">${barra}</div>
+      <div class="atv-legs">${legs}</div>
+      ${voc?`<div class="atv-voc">${voc}</div>`:''}
+      <div class="univ-fonte">Fonte: IBGE — PIB dos Municípios (${store.atv.period}). "Serviços" inclui administração pública. Para 2022–2023 o IBGE não divulgou a abertura por setor, então exibe-se o ano mais recente com esse detalhe.</div>
+    </div>`;
+  }
+
+  const cl = CLIMA[e.sigla];
+  let cHtml='';
+  if(cl){
+    cHtml=`<div class="univ-block clima">
+      <div class="univ-h">Clima predominante</div>
+      <div class="clima-tipo">${cl.t}</div>
+      <div class="clima-desc">${cl.d}</div>
+      <div class="clima-faixa">Temperatura média anual típica: <b>${cl.f}</b></div>
+      <div class="univ-fonte">Classificação de Köppen. A faixa é típica do tipo climático (aproximada), não é medição de estação — estados grandes variam muito por dentro. Para o valor exato da capital, consulte as Normais Climatológicas do INMET.</div>
+    </div>`;
+  }
+
+  const cidadesUF = CIDADES_VIOLENTAS.filter(c=>c.uf===e.sigla);
+  const taxaUF = ESTADOS_VIOLENTOS[e.sigla];
+  let sHtml='';
+  if(cidadesUF.length || taxaUF){
+    let inner='';
+    if(taxaUF) inner += `<div class="seg-taxa">Taxa estadual: <b>${taxaUF.toLocaleString('pt-BR')}</b> MVI por 100 mil hab. (2025) — entre as mais altas do país.</div>`;
+    if(cidadesUF.length){
+      inner += `<div class="seg-sub2">Municípios no top 10 nacional (2025)</div><ul class="univ-list">`
+        + cidadesUF.map(c=>`<li><b>${c.pos}º</b>${c.cidade} — ${c.taxa.toLocaleString('pt-BR')}/100 mil</li>`).join('')
+        + `</ul>`;
+    }
+    sHtml=`<div class="univ-block seguranca">
+      <div class="univ-h">Segurança pública · MVI 2025</div>
+      ${inner}
+      <div class="univ-fonte">Fonte: 20º Anuário FBSP (jul/2026), dados de 2025. Ranking de cidades: só municípios com 100 mil+ hab. É a foto de um ano — muda anualmente.</div>
+    </div>`;
+  }
+
+  const ifs = INSTITUTOS[e.sigla] || [];
+  const iItens = ifs.map(u=>`<li><b>${u[0]}</b>${u[1]}</li>`).join('');
+  const iHtml = `<div class="univ-block instituto">
+      <div class="univ-h">Institutos Federais no estado · ${ifs.length}</div>
+      <ul class="univ-list">${iItens || '<li style="color:var(--tinta-suave)">Lista não disponível.</li>'}</ul>
+      <div class="univ-fonte">Fonte: Rede Federal / Lei 11.892/2008 e fontes públicas. Cada IF tem vários campi pelo estado. Total nacional: 38 na criação (o MEC cita 39; outras fontes, 41).</div>
+    </div>`;
+
+  document.getElementById('mBody').innerHTML = `
+    <div class="stat-grid">
+      <div class="stat"><div class="k">População</div><div class="v">${fmtNum(pop)}</div><div class="r">${popRef}</div></div>
+      <div class="stat"><div class="k">Municípios</div><div class="v">${nMun!=null?nMun:'—'}</div><div class="r">Malha territorial IBGE</div></div>
+      <div class="stat"><div class="k">PIB</div><div class="v">${pibT!=null?fmtReais(pibT*store.pib.fator):'—'}</div><div class="r">${pibRef}</div></div>
+      <div class="stat"><div class="k">PIB per capita</div><div class="v">${pibPc!=null?fmtReais(pibPc):'—'}</div><div class="r">${pibRef}</div></div>
+    </div>
+    ${idHtml}
+    ${aHtml}
+    ${cHtml}
+    ${sHtml}
+    ${uHtml}
+    ${eHtml}
+    ${iHtml}
+    <button class="btn-mun" id="btnMun">Ver municípios e população</button>
+    <div id="munArea"></div>`;
+
+  document.getElementById('btnMun').onclick = ()=>verMunicipios(e);
+
+  const mFav = document.getElementById('mFav');
+  const setFavIcon = ()=>{ const on=isFav(e.sigla); mFav.textContent=on?'★':'☆'; mFav.classList.toggle('on',on); };
+  setFavIcon();
+  mFav.onclick = ()=>{ toggleFav(e.sigla); setFavIcon(); renderGrid(); };
+  document.getElementById('mSpeak').onclick = ()=>falarEstado(e);
+
+  const ov = document.getElementById('overlay');
+  ov.classList.add('open'); document.body.style.overflow='hidden';
+  document.getElementById('mClose').focus();
+}
+
+async function verMunicipios(e){
+  const btn = document.getElementById('btnMun');
+  const area = document.getElementById('munArea');
+  btn.disabled = true; btn.textContent = 'Carregando municípios…';
+  try{
+    const mp = await loadMunPop();
+    const muns = (store.munsPorUf[e.id]||[]).map(m=>({
+      id:m.id, nome:m.nome, pop: mp.map.get(String(m.id))
+    })).sort((a,b)=>(b.pop||0)-(a.pop||0));
+
+    area.innerHTML = `
+      <input class="mun-search" id="munBusca" placeholder="Filtrar municípios de ${e.sigla}…" aria-label="Filtrar municípios">
+      <div class="mun-list" id="munList"></div>
+      <div class="r" style="font-family:'Space Mono',monospace;font-size:13.5px;color:var(--tinta-suave);margin-top:8px">
+        ${muns.length} municípios · população: estimativa IBGE ${mp.period} · ★ capital</div>`;
+
+    const capital = CAPITAIS[e.id];
+    const draw = (filtro)=>{
+      const f = (filtro||'').toLowerCase();
+      const list = document.getElementById('munList');
+      list.innerHTML='';
+      let rank=0;
+      muns.forEach((m)=>{ m._rank = ++rank; });
+      const vis = muns.filter(m=>!f || m.nome.toLowerCase().includes(f));
+      vis.forEach(m=>{
+        const row = document.createElement('div');
+        row.className = 'mun-row' + (m.nome===capital?' capital':'');
+        row.innerHTML = `<span class="rank">${m._rank}º</span><span class="mn">${m.nome}</span><span class="mp">${fmtNum(m.pop)}</span>`;
+        list.appendChild(row);
+      });
+      if(!vis.length) list.innerHTML='<div class="mun-row"><span class="mn" style="color:var(--tinta-suave)">Nenhum município encontrado.</span></div>';
+    };
+    draw('');
+    document.getElementById('munBusca').addEventListener('input', ev=>draw(ev.target.value));
+    btn.style.display='none';
+  }catch(err){
+    area.innerHTML = '<div class="msg err">Não foi possível carregar os municípios agora. Verifique a conexão e tente reabrir o estado.</div>';
+    btn.disabled=false; btn.textContent='Ver municípios e população';
+  }
+}
+
+function fecharModal(){
+  document.getElementById('overlay').classList.remove('open');
+  document.body.style.overflow='';
+}
+
+/* ---------- Brasil (hero) ---------- */
+function renderBrasil(nMunTotal){
+  if(store.pop){
+    const br = store.pop.br.get('1');
+    document.getElementById('brPop').textContent = fmtNum(br);
+    document.getElementById('brPopRef').textContent = 'Estimativa '+store.pop.period;
+  }
+  if(nMunTotal!=null){
+    document.getElementById('brMun').textContent = fmtNum(nMunTotal);
+    document.getElementById('brMunRef').textContent = 'malha atual IBGE';
+  }
+  if(store.pib){
+    const brp = store.pib.brTotal.get('1');
+    document.getElementById('brPib').textContent = brp!=null?fmtReais(brp*store.pib.fator):'—';
+    document.getElementById('brPibRef').textContent = brp!=null?('PIB '+store.pib.period):'indisponível';
+  }
+}
+
+function renderSeguranca(){
+  const ul=document.getElementById('violList');
+  if(!ul) return;
+  ul.innerHTML = CIDADES_VIOLENTAS.map(c=>
+    `<li class="viol-item"><span class="vpos">${c.pos}º</span><span class="vcity">${c.cidade}</span><span class="vuf">${c.uf}</span><span class="vrate">${c.taxa.toLocaleString('pt-BR')}</span></li>`
+  ).join('');
+}
+
+/* ---------- leitura em voz (Web Speech API) ---------- */
+function falarEstado(e){
+  if(!('speechSynthesis' in window)){ return; }
+  const pop=ufPop(e), area=AREA[e.sigla], dens=ufDens(e), cl=CLIMA[e.sigla];
+  const partes=[
+    `${e.nome}. Capital: ${CAPITAIS[e.id]||'não informada'}.`,
+    `Região ${(REGIOES[e.regiao.id]||{}).nome||''}.`,
+    pop!=null?`População: ${fmtNum(pop)} habitantes.`:'',
+    area?`Área: ${fmtNum(area)} quilômetros quadrados.`:'',
+    dens!=null?`Densidade: ${dens.toLocaleString('pt-BR',{maximumFractionDigits:1})} habitantes por quilômetro quadrado.`:'',
+    GENTILICO[e.sigla]?`Gentílico: ${GENTILICO[e.sigla]}.`:'',
+    BIOMA[e.sigla]?`Bioma predominante: ${BIOMA[e.sigla]}.`:'',
+    cl?`Clima: ${cl.t}.`:''
+  ].filter(Boolean);
+  const u=new SpeechSynthesisUtterance(partes.join(' '));
+  u.lang='pt-BR'; u.rate=1;
+  const vs=speechSynthesis.getVoices()||[];
+  const pt = vs.find(v=>/pt[-_]?BR/i.test(v.lang)&&/francisca/i.test(v.name))
+          || vs.find(v=>/pt[-_]?BR/i.test(v.lang))
+          || vs.find(v=>/^pt/i.test(v.lang));
+  if(pt) u.voice=pt;
+  speechSynthesis.cancel(); speechSynthesis.speak(u);
+}
+
+/* ---------- busca global de município ---------- */
+let munBuscaTimer=null;
+function buscaMunicipioInput(v){ clearTimeout(munBuscaTimer); munBuscaTimer=setTimeout(()=>buscaMunicipio(v),260); }
+async function buscaMunicipio(termo){
+  const res=document.getElementById('munGlobalRes');
+  termo=(termo||'').trim().toLowerCase();
+  if(termo.length<3){ res.innerHTML=''; res.classList.remove('show'); return; }
+  res.classList.add('show');
+  res.innerHTML='<div class="mun-g-item muted">Buscando…</div>';
+  if(!Object.keys(store.munsPorUf).length){ try{ await loadMunicipios(); }catch(e){} }
+  let mp=null; try{ mp=await loadMunPop(); }catch(e){}
+  const sigById={}; store.estados.forEach(e=>{ sigById[e.id]=e.sigla; });
+  const matches=[];
+  for(const uf in store.munsPorUf){
+    for(const m of store.munsPorUf[uf]){
+      if(m.nome.toLowerCase().includes(termo)){
+        matches.push({nome:m.nome, uf:sigById[uf]||'', pop: mp?mp.map.get(String(m.id)):null});
+      }
+    }
+  }
+  matches.sort((a,b)=>(b.pop||0)-(a.pop||0));
+  const top=matches.slice(0,40);
+  if(!top.length){ res.innerHTML='<div class="mun-g-item muted">Nenhum município encontrado.</div>'; return; }
+  res.innerHTML = top.map(m=>
+    `<div class="mun-g-item"><span class="mn">${m.nome}</span><span class="uf">${m.uf}</span><span class="mp">${m.pop!=null?fmtNum(m.pop):'—'}</span></div>`
+  ).join('') + (matches.length>top.length?`<div class="mun-g-item muted">+${matches.length-top.length} outros — refine a busca.</div>`:'')
+    + (mp?`<div class="mun-g-item muted" style="font-family:'Space Mono',monospace">População: estimativa IBGE ${mp.period}</div>`:'');
+}
+
+/* ---------- comparador de estados ---------- */
+function abrirComparador(){
+  if(!store.estados.length) return;
+  const opts=store.estados.slice().sort((a,b)=>a.nome.localeCompare(b.nome,'pt-BR'))
+    .map(e=>`<option value="${e.sigla}">${e.nome} (${e.sigla})</option>`).join('');
+  const a=document.getElementById('cmpA'), b=document.getElementById('cmpB');
+  a.innerHTML=opts; b.innerHTML=opts;
+  a.value = (estadoBySigla('SP')||store.estados[0]).sigla;
+  b.value = (estadoBySigla('MA')||store.estados[1]||store.estados[0]).sigla;
+  renderComparacao();
+  document.getElementById('cmpOverlay').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function fecharComparador(){ document.getElementById('cmpOverlay').classList.remove('open'); document.body.style.overflow=''; }
+function renderComparacao(){
+  const ea=estadoBySigla(document.getElementById('cmpA').value);
+  const eb=estadoBySigla(document.getElementById('cmpB').value);
+  if(!ea||!eb) return;
+  const mvi = e => ESTADOS_VIOLENTOS[e.sigla]!=null ? ESTADOS_VIOLENTOS[e.sigla].toLocaleString('pt-BR')+'/100 mil' : '—';
+  const rows=[
+    ['Capital', CAPITAIS[ea.id]||'—', CAPITAIS[eb.id]||'—'],
+    ['Região', (REGIOES[ea.regiao.id]||{}).nome||'—', (REGIOES[eb.regiao.id]||{}).nome||'—'],
+    ['População', ufPop(ea)!=null?fmtNum(ufPop(ea)):'…', ufPop(eb)!=null?fmtNum(ufPop(eb)):'…'],
+    ['Área', AREA[ea.sigla]?fmtNum(AREA[ea.sigla])+' km²':'—', AREA[eb.sigla]?fmtNum(AREA[eb.sigla])+' km²':'—'],
+    ['Densidade', fmtDens(ufDens(ea)), fmtDens(ufDens(eb))],
+    ['PIB', ufPibReais(ea)!=null?fmtReais(ufPibReais(ea)):'…', ufPibReais(eb)!=null?fmtReais(ufPibReais(eb)):'…'],
+    ['PIB per capita', ufPibPc(ea)!=null?fmtReais(ufPibPc(ea)):'…', ufPibPc(eb)!=null?fmtReais(ufPibPc(eb)):'…'],
+    ['Municípios', ufMun(ea)!=null?ufMun(ea):'…', ufMun(eb)!=null?ufMun(eb):'…'],
+    ['Deputados fed.', DEPUTADOS[ea.sigla]||'—', DEPUTADOS[eb.sigla]||'—'],
+    ['Clima', (CLIMA[ea.sigla]||{}).t||'—', (CLIMA[eb.sigla]||{}).t||'—'],
+    ['Violência MVI (2025)', mvi(ea), mvi(eb)]
+  ];
+  document.getElementById('cmpTable').innerHTML =
+    `<div class="cmp-row cmp-head"><span></span><b>${ea.sigla}</b><b>${eb.sigla}</b></div>`
+    + rows.map(r=>`<div class="cmp-row"><span>${r[0]}</span><b>${r[1]}</b><b>${r[2]}</b></div>`).join('');
+}
+
+function renderSocial(){
+  const n=document.getElementById('alfabNum'), note=document.getElementById('alfabNote');
+  if(!n) return;
+  if(store.alfab && store.alfab.br!=null){
+    n.textContent = store.alfab.br.toLocaleString('pt-BR',{maximumFractionDigits:1})+'%';
+    note.textContent = `Pessoas de 15 anos ou mais que sabem ler e escrever. Fonte: IBGE — Censo ${store.alfab.period}.`;
+  }else{
+    note.textContent = 'Pessoas de 15 anos ou mais que sabem ler e escrever. Fonte: IBGE — Censo 2022. (dado indisponível no momento)';
+  }
+}
+
+/* ---------- init ---------- */
+async function init(){
+  renderSeguranca();
+  // esqueleto enquanto carrega
+  const grid = document.getElementById('grid');
+  grid.innerHTML = Array.from({length:12}).map(()=>'<div class="skeleton"></div>').join('');
+
+  try{
+    await loadEstados();
+    renderLegenda();
+    renderGrid();
+  }catch(err){
+    document.getElementById('gridMsg').innerHTML =
+      '<div class="msg err">Não foi possível conectar à API do IBGE. Isso costuma ser bloqueio de rede ou CORS ao abrir o arquivo localmente. Publique o arquivo (GitHub Pages/Locaweb) ou tente novamente com conexão ativa.</div>';
+    return;
+  }
+
+  // camadas de dados em paralelo, cada uma atualiza o que conseguir
+  loadMunicipios().then(total=>{ renderBrasil(total); renderGrid(); })
+    .catch(()=>{ document.getElementById('brMunRef').textContent='indisponível'; });
+
+  loadPop().then(()=>{ renderBrasil(store.munsPorUf ? Object.values(store.munsPorUf).reduce((a,b)=>a+b.length,0) : null); renderGrid(); })
+    .catch(()=>{ document.getElementById('brPopRef').textContent='indisponível'; });
+
+  loadPib().then(()=>renderBrasil(null))
+    .catch(()=>{ document.getElementById('brPibRef').textContent='indisponível'; });
+
+  loadAtividade().catch(()=>{ /* bloco de economia não aparece se indisponível */ });
+
+  loadAlfab().then(()=>{ renderSocial(); renderGrid(); }).catch(()=>renderSocial());
+}
+
+/* eventos */
+document.getElementById('busca').addEventListener('input', renderGrid);
+document.getElementById('ordenar').addEventListener('change', e=>{ store.ordenar=e.target.value; renderGrid(); });
+document.getElementById('btnFav').addEventListener('click', e=>{
+  store.soFav=!store.soFav;
+  e.currentTarget.setAttribute('aria-pressed', store.soFav?'true':'false');
+  e.currentTarget.textContent = (store.soFav?'★':'☆')+' Favoritos';
+  e.currentTarget.classList.toggle('on', store.soFav);
+  renderGrid();
+});
+document.getElementById('btnComparar').addEventListener('click', abrirComparador);
+document.getElementById('munGlobal').addEventListener('input', e=>buscaMunicipioInput(e.target.value));
+document.getElementById('cmpClose').addEventListener('click', fecharComparador);
+document.getElementById('cmpOverlay').addEventListener('click', e=>{ if(e.target.id==='cmpOverlay') fecharComparador(); });
+document.getElementById('cmpA').addEventListener('change', renderComparacao);
+document.getElementById('cmpB').addEventListener('change', renderComparacao);
+document.getElementById('mClose').addEventListener('click', fecharModal);
+document.getElementById('overlay').addEventListener('click', e=>{ if(e.target.id==='overlay') fecharModal(); });
+document.addEventListener('keydown', e=>{ if(e.key==='Escape'){ fecharModal(); fecharComparador(); } });
+if('speechSynthesis' in window){ speechSynthesis.onvoiceschanged=()=>{}; }
+
+/* ---------- PWA: service worker + botão instalar ---------- */
+if('serviceWorker' in navigator){
+  window.addEventListener('load', ()=>{ navigator.serviceWorker.register('sw.js').catch(()=>{}); });
+}
+let deferredPrompt=null;
+window.addEventListener('beforeinstallprompt', e=>{
+  e.preventDefault(); deferredPrompt=e;
+  const b=document.getElementById('btnInstalar'); if(b) b.style.display='inline-flex';
+});
+(function(){
+  const b=document.getElementById('btnInstalar');
+  if(b) b.addEventListener('click', async ()=>{
+    if(!deferredPrompt) return;
+    deferredPrompt.prompt();
+    try{ await deferredPrompt.userChoice; }catch(e){}
+    deferredPrompt=null; b.style.display='none';
+  });
+})();
+window.addEventListener('appinstalled', ()=>{ const b=document.getElementById('btnInstalar'); if(b) b.style.display='none'; });
+
+init();
+</script>
+</body>
+</html>
